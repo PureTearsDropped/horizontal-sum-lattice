@@ -2,7 +2,7 @@
 
 A bounded lattice whose ι-labelled chains meet only at `⊥` and join only at `⊤`
 — the **horizontal sum** — together with its action and the algebra of its
-labels. Lean 4 + Mathlib, **307 declarations audited, no `sorry`**.
+labels. Lean 4 + Mathlib, **313 declarations audited, no `sorry`**.
 
 > ⚠️ 生成AI使用・要検証 / AI-assisted; verify.
 > 定理は Lean が確かめている（`tools/verify.py` が 268/268 を報告する）。
@@ -13,7 +13,7 @@ labels. Lean 4 + Mathlib, **307 declarations audited, no `sorry`**.
 git clone https://github.com/PureTearsDropped/horizontal-sum-lattice
 cd horizontal-sum-lattice
 lake exe cache get && lake build
-python tools/verify.py            # 307/307
+python tools/verify.py            # 313/313
 ```
 
 ---
@@ -154,7 +154,7 @@ READING.md    この束を何と読むか。**定理は一つもこれに依存�
 
 ## 検証
 
-`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、307 本が
+`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、313 本が
 
 - 受理されていること（Lean は受理した宣言にしか答えない）
 - `sorryAx` を含まないこと
@@ -197,7 +197,25 @@ lattice-based sum（El-Zekey–Medina–Mesiar, 2013）は「線形な添字に�
 構造の無い添字に基づく水平和の**中間の和**は在るか」という問いへの答として
 提出されたもので、水平和はその特別な場合である。
 
-**このリポが形式化しているのは階層の一点にすぎない。**
+**そしてその台と順序は Mathlib に在る。**自前で書く必要はなかった。
+
+```
+Sigma.LE     直和。⟨i,a⟩ ⪯ ⟨j,b⟩ ⟺ i = j かつ a ⪯ b      ← 添字が反鎖
+Σₗ i, P i    レックス和。i < j または（i = j かつ a ⪯ b）  ← 添字が順序集合
+             Data/Sigma/Order.lean に Preorder/PartialOrder/LinearOrder まで
+```
+
+両端に特殊化することだけ確かめた（`HorizontalSum/IndexedSum.lean`）。
+
+```
+lex_of_lt_index      i < j なら成分をまたいで下から上へ    順序和の振る舞い
+lex_incomparable     添字が比較不能なら成分も比較不能      水平和の振る舞い
+lex_total_of_linear  添字が鎖なら異なる成分は必ず比較できる
+lex_le_iff_of_no_lt  **添字に真の順序が無ければ直和に一致**
+```
+
+**このリポが埋めているのは、そのうち「添字が反鎖」の場合に `⊥`,`⊤` を足して
+束にするところだけ**である。台も順序も既にあり、無いのは束の構造だけだった。
 
 `Family.T ι P` は、各 `P i` に上下端を付けた bounded poset
 

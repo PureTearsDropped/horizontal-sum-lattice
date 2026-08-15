@@ -312,4 +312,10 @@ CHECKED = [
     ('IsHorizontalSum.range_disjoint', '**異なる成分の像は交わらない**'),
     ('IsHorizontalSum.shared_only_bounds', '**共有されるのは ⊥ と ⊤ だけ**'),
     ('IsHorizontalSum.partition', '**台の分割** univ = {⊥,⊤} ∪ ⋃ 成分の像'),
+    ('lex_of_lt_index', '**添字が下なら成分をまたいで下から上へ**（順序和の振る舞い）'),
+    ('lex_incomparable', '**添字が比較不能なら成分も比較不能**（水平和の振る舞い）'),
+    ('lex_le_same', '同じ添字なら成分の順序がそのまま移る'),
+    ('lex_total', '添字が比較できれば成分も比較できる'),
+    ('lex_total_of_linear', '**添字が鎖なら異なる成分は必ず比較できる**＝順序和'),
+    ('lex_le_iff_of_no_lt', '**添字に真の順序が無ければレックス和は直和に一致**'),
 ]

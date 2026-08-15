@@ -4,9 +4,9 @@
 在るのは宣言名と型（定理なら主張そのもの）だけで、読み・動機・解釈は
 `DESIGN.md` / `READING.md` の側に置く。生成は `tools/gen_theorems.py`。
 
-    定理・補題   381
+    定理・補題   387
     定義・実装   85
-    合計         466
+    合計         472
 
 すべて Lean 4 + Mathlib で受理済み（`sorryAx` なし）。検証は
 `python tools/verify.py` が `#print axioms` の出力から確かめる。
@@ -3380,5 +3380,55 @@ def clockEnd (f : ι → (α ≃o α)) :
 ```lean
 def semiMulEquiv (f : ι → (α ≃o α)) : Semi f ≃* MSemi (clockEnd f) where
   toFun p
+```
+
+## IndexedSum
+
+## 添字集合に順序を入れる — これは Mathlib に在る
+
+**`HorizontalSum.lex_of_lt_index`**
+
+```lean
+theorem lex_of_lt_index {i j : I} (hij : i < j) (a : P i) (b : P j) :
+    (toLex ⟨i, a⟩ : Σₗ i, P i) ≤ toLex ⟨j, b⟩
+```
+
+**`HorizontalSum.lex_incomparable`**
+
+```lean
+theorem lex_incomparable {i j : I} (hne : i ≠ j) (hlt : ¬ i < j)
+    (a : P i) (b : P j) : ¬ ((toLex ⟨i, a⟩ : Σₗ i, P i) ≤ toLex ⟨j, b⟩)
+```
+
+**`HorizontalSum.lex_le_same`**
+
+```lean
+theorem lex_le_same (i : I) (a b : P i) :
+    ((toLex ⟨i, a⟩ : Σₗ i, P i) ≤ toLex ⟨i, b⟩) ↔ a ≤ b
+```
+
+**`HorizontalSum.lex_total`**
+
+```lean
+theorem lex_total {i j : I} (hij : i < j ∨ j < i) (a : P i) (b : P j) :
+    ((toLex ⟨i, a⟩ : Σₗ i, P i) ≤ toLex ⟨j, b⟩) ∨
+      ((toLex ⟨j, b⟩ : Σₗ i, P i) ≤ toLex ⟨i, a⟩)
+```
+
+**`HorizontalSum.lex_total_of_linear`**
+
+```lean
+theorem lex_total_of_linear [LinearOrder I] {J : Type u} {Q : J → Type v}
+    [LinearOrder J] [∀ j, Preorder (Q j)] {i j : J} (hij : i ≠ j)
+    (a : Q i) (b : Q j) :
+    ((toLex ⟨i, a⟩ : Σₗ j, Q j) ≤ toLex ⟨j, b⟩) ∨
+      ((toLex ⟨j, b⟩ : Σₗ j, Q j) ≤ toLex ⟨i, a⟩)
+```
+
+**`HorizontalSum.lex_le_iff_of_no_lt`**
+
+```lean
+theorem lex_le_iff_of_no_lt (h : ∀ i j : I, ¬ i < j) {i j : I} (a : P i) (b : P j) :
+    ((toLex ⟨i, a⟩ : Σₗ i, P i) ≤ toLex ⟨j, b⟩) ↔ ∃ e : i = j, (e ▸ a : P j) ≤ b
 ```
 

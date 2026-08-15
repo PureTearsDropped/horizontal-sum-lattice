@@ -65,8 +65,8 @@ class TheAuditCoversEverything(unittest.TestCase):
         self.assertEqual(printed - {n for n, _ in CHECKED}, set())
 
     def test_the_count_is_stated_everywhere(self):
-        self.assertEqual(len(CHECKED), 307)
-        self.assertIn('307', (ROOT / 'README.md').read_text())
+        self.assertEqual(len(CHECKED), 313)
+        self.assertIn('313', (ROOT / 'README.md').read_text())
 
 
 class TheGeneratedDocumentIsFresh(unittest.TestCase):
@@ -140,7 +140,8 @@ class TheClaimsAreBounded(unittest.TestCase):
     def test_the_readme_places_itself_in_the_hierarchy(self):
         """**水平和も一般形ではない。**上に lattice-based sums が在る。"""
         self.assertIn('lattice-based sum', self.readme)
-        self.assertIn('形式化しているのは階層の一点', self.readme)
+        self.assertIn('台も順序も既にあり、無いのは束の構造だけ', self.readme)
+        self.assertIn('Σₗ', self.readme)
 
     def test_the_readme_disclaims_mathematical_novelty(self):
         """**残るのは形式化の側だけ。**数学的な新しさは主張しない。"""

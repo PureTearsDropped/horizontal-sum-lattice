@@ -309,3 +309,9 @@ import HorizontalSum
 #print axioms HorizontalSum.IsHorizontalSum.range_disjoint
 #print axioms HorizontalSum.IsHorizontalSum.shared_only_bounds
 #print axioms HorizontalSum.IsHorizontalSum.partition
+#print axioms HorizontalSum.lex_of_lt_index
+#print axioms HorizontalSum.lex_incomparable
+#print axioms HorizontalSum.lex_le_same
+#print axioms HorizontalSum.lex_total
+#print axioms HorizontalSum.lex_total_of_linear
+#print axioms HorizontalSum.lex_le_iff_of_no_lt

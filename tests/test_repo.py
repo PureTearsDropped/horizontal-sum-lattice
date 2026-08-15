@@ -126,20 +126,21 @@ class TheClaimsAreBounded(unittest.TestCase):
     def test_the_cone_is_not_claimed_filled(self):
         self.assertIn('埋まらない', self.design)
 
-    def test_the_readme_separates_checked_from_unchecked_prior_art(self):
-        """**確かめたことと確かめていないことを混ぜない。**
+    def test_the_readme_says_the_construction_is_known(self):
+        """**構成そのものは既知。**当てた結果をそのまま書く。
 
-        一度「順序論では既知」と確かめずに断定した。過小主張も、確かめずに
-        言えば過大主張と同じ誤りである。その区別を消させない。
+        この節は二度書き直した。最初は確かめずに「既知」と断定し、次は
+        確かめずに「未確認」と保留し、三度目に実際に当たって「既知」に
+        落ち着いた。過小主張も過大主張も、確かめずに言えば同じ誤りである。
         """
-        self.assertIn('未確認', self.readme)
-        self.assertIn('確かめていない', self.readme)
         self.assertIn('Zappa', self.readme)
+        self.assertIn('水平和（有界半順序の族）', self.readme)
+        self.assertIn('この一般形も既存の枠内', self.readme)
 
-    def test_the_readme_states_how_the_classical_horizontal_sum_differs(self):
-        """古典的な水平和は**有界束の境界を貼り合わせる**構成で、別物である。"""
-        self.assertIn('貼り合わせる', self.readme)
-        self.assertIn('新しく足す', self.readme)
+    def test_the_readme_disclaims_mathematical_novelty(self):
+        """**残るのは形式化の側だけ。**数学的な新しさは主張しない。"""
+        self.assertIn('数学的な新規性としては主張しない', self.readme)
+        self.assertIn('既知の構成の Lean 4 + Mathlib 形式化', self.readme)
 
     def test_the_readme_says_sufficient_not_necessary(self):
         """反例を README にも残す。ここが一度間違えたところ。"""

@@ -15,3 +15,4 @@ import HorizontalSum.Semidirect
 import HorizontalSum.Bridge
 import HorizontalSum.Family
 import HorizontalSum.Cost
+import HorizontalSum.Bounded

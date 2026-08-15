@@ -2,7 +2,7 @@
 
 A bounded lattice whose ι-labelled chains meet only at `⊥` and join only at `⊤`
 — the **horizontal sum** — together with its action and the algebra of its
-labels. Lean 4 + Mathlib, **268 declarations audited, no `sorry`**.
+labels. Lean 4 + Mathlib, **285 declarations audited, no `sorry`**.
 
 > ⚠️ 生成AI使用・要検証 / AI-assisted; verify.
 > 定理は Lean が確かめている（`tools/verify.py` が 268/268 を報告する）。
@@ -13,7 +13,7 @@ labels. Lean 4 + Mathlib, **268 declarations audited, no `sorry`**.
 git clone https://github.com/PureTearsDropped/horizontal-sum-lattice
 cd horizontal-sum-lattice
 lake exe cache get && lake build
-python tools/verify.py            # 268/268
+python tools/verify.py            # 285/285
 ```
 
 ---
@@ -141,13 +141,13 @@ READING.md    この束を何と読むか。**定理は一つもこれに依存�
 
 ## 検証
 
-`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、268 本が
+`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、285 本が
 
 - 受理されていること（Lean は受理した宣言にしか答えない）
 - `sorryAx` を含まないこと
 - `propext` / `Classical.choice` / `Quot.sound` 以外の公理に依らないこと
 
-を確かめる。うち 7 本は公理をまったく使わない。
+を確かめる。うち 11 本は公理をまったく使わない。
 
 ## 言えないこと
 
@@ -181,6 +181,31 @@ P̂ i = WithBot (WithTop (P i))
 
 一度「この版は未確認」と書いたが、**確かめたら既知だった**。過小主張も過大主張も、
 確かめずに言えば同じ誤りである。
+
+### 文献の定義そのものを書いた
+
+`Family.T` を「一つの構成」で終わらせず、**文献の条件を性質として書いて**
+`Family.T` がそれを満たすことを示した（`HorizontalSum/Bounded.lean`）。
+
+```
+IsHorizontalSum         成分の元は ⊥ でも ⊤ でもない・成分の中では順序が移る
+                        **異なる成分は比較不能**・台は ⊥,⊤,成分で尽きる
+                        非退化（文献も "nontrivial" と言う）
+mid_isHorizontalSum     **Family.T はこの意味での水平和である**
+transfer_bot/top/mid    二つの水平和の間の対応（⊥↦⊥・⊤↦⊤・emb↦emb'）
+```
+
+### いつ水平和になるか・いつ可換になるか
+
+条件を両向きで書けるところは書いた。
+
+```
+same_component_of_comparable  比べられるなら同じ成分
+cross_sup_top / cross_inf_bot **束なら成分をまたぐ結びは ⊤・交わりは ⊥**
+                              ⟹ 中間の高さで出会う対が一組でも在れば水平和でない
+semi_comm_iff                 **半直積が可換 ⟺ 時計が恒等**（両向き）
+                              捻れが少しでも在れば非可換（semi_not_comm_of_clock_ne）
+```
 
 ### では何が残るか — 形式化の側だけ
 

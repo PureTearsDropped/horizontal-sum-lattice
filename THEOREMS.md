@@ -4,9 +4,9 @@
 在るのは宣言名と型（定理なら主張そのもの）だけで、読み・動機・解釈は
 `DESIGN.md` / `READING.md` の側に置く。生成は `tools/gen_theorems.py`。
 
-    定理・補題   344
-    定義・実装   71
-    合計         415
+    定理・補題   361
+    定義・実装   73
+    合計         434
 
 すべて Lean 4 + Mathlib で受理済み（`sorryAx` なし）。検証は
 `python tools/verify.py` が `#print axioms` の出力から確かめる。
@@ -3005,5 +3005,158 @@ theorem not_modular {i j : ι} (hij : i ≠ j) {a c : α} (hac : a ≤ c) (hne :
     (b : α) :
     (E.axis i a : E ι α) ⊔ ((E.axis j b : E ι α) ⊓ E.axis i c) ≠
       ((E.axis i a : E ι α) ⊔ E.axis j b) ⊓ E.axis i c
+```
+
+## Bounded
+
+## 文献の定義をそのまま書く — 有界半順序の族の水平和
+
+**`HorizontalSum.IsHorizontalSum`**
+
+```lean
+structure IsHorizontalSum {ι : Type u} (P : ι → Type v) [∀ i, Preorder (P i)]
+    (S : Type w) [PartialOrder S] [BoundedOrder S]
+    (emb : ∀ i, P i → S) : Prop where
+  ne_bot : ∀ i a, emb i a ≠ ⊥
+  ne_top : ∀ i a, emb i a ≠ ⊤
+  mono : ∀ i a b, emb i a ≤ emb i b ↔ a ≤ b
+  cross : ∀ ⦃i j⦄, i ≠ j → ∀ a b, ¬ (emb i a ≤ emb j b)
+  covers : ∀ s : S, s = ⊥ ∨ s = ⊤ ∨ ∃ i a, s = emb i a
+  bot_ne_top : (⊥ : S) ≠ ⊤
+```
+
+**`HorizontalSum.IsHorizontalSum.injective`**
+
+```lean
+theorem injective (h : IsHorizontalSum P S emb) (i : ι) :
+    Function.Injective (emb i)
+```
+
+**`HorizontalSum.IsHorizontalSum.ne_of_ne_index`**
+
+```lean
+theorem ne_of_ne_index (h : IsHorizontalSum P S emb) {i j : ι} (hij : i ≠ j)
+    (a : P i) (b : P j) : emb i a ≠ emb j b
+```
+
+**`HorizontalSum.IsHorizontalSum.emb_eq_transport`**
+
+```lean
+theorem emb_eq_transport {S' : Type w} [PartialOrder S'] [BoundedOrder S']
+    {emb' : ∀ i, P i → S'} (h : IsHorizontalSum P S emb)
+    (h' : IsHorizontalSum P S' emb') {i j : ι} {a : P i} {b : P j}
+    (e : emb i a = emb j b) : emb' i a = emb' j b
+```
+
+### `Family.T` は水平和である
+
+**`HorizontalSum.Family.mid_ne_bot`**
+
+```lean
+@[simp] theorem mid_ne_bot (i : ι) (a : P i) : (T.mid i a : T ι P) ≠ ⊥
+```
+
+**`HorizontalSum.Family.mid_ne_top`**
+
+```lean
+@[simp] theorem mid_ne_top (i : ι) (a : P i) : (T.mid i a : T ι P) ≠ ⊤
+```
+
+**`HorizontalSum.Family.mid_isHorizontalSum`**
+
+```lean
+theorem mid_isHorizontalSum : IsHorizontalSum P (T ι P) T.mid where
+  ne_bot
+```
+
+### 同型を除いて一意
+
+**`HorizontalSum.IsHorizontalSum.transfer`**
+
+```lean
+noncomputable def transfer (h : IsHorizontalSum P S emb)
+    (h' : IsHorizontalSum P S' emb') (s : S) : S'
+```
+
+**`HorizontalSum.IsHorizontalSum.transfer_bot`**
+
+```lean
+theorem transfer_bot (h : IsHorizontalSum P S emb) (h' : IsHorizontalSum P S' emb') :
+    transfer h h' ⊥ = ⊥
+```
+
+**`HorizontalSum.IsHorizontalSum.transfer_top`**
+
+```lean
+theorem transfer_top (h : IsHorizontalSum P S emb) (h' : IsHorizontalSum P S' emb') :
+    transfer h h' ⊤ = ⊤
+```
+
+**`HorizontalSum.IsHorizontalSum.transfer_mid`**
+
+```lean
+theorem transfer_mid (h : IsHorizontalSum P S emb) (h' : IsHorizontalSum P S' emb')
+    (i : ι) (a : P i) : transfer h h' (emb i a) = emb' i a
+```
+
+### いつ水平和になるか — 必要条件を内在的に書く
+
+**`HorizontalSum.IsHorizontalSum.same_component_of_comparable`**
+
+```lean
+theorem same_component_of_comparable (h : IsHorizontalSum P S emb)
+    {i j : ι} {a : P i} {b : P j}
+    (hc : emb i a ≤ emb j b ∨ emb j b ≤ emb i a) : i = j
+```
+
+**`HorizontalSum.IsHorizontalSum.not_le_bot`**
+
+```lean
+theorem not_le_bot (h : IsHorizontalSum P S emb) (i : ι) (a : P i) :
+    ¬ (emb i a ≤ ⊥)
+```
+
+**`HorizontalSum.IsHorizontalSum.not_top_le`**
+
+```lean
+theorem not_top_le (h : IsHorizontalSum P S emb) (i : ι) (a : P i) :
+    ¬ ((⊤ : S) ≤ emb i a)
+```
+
+**`HorizontalSum.IsHorizontalSum.cross_sup_top`**
+
+```lean
+theorem cross_sup_top (h : IsHorizontalSum P L emb) {i j : ι} (hij : i ≠ j)
+    (a : P i) (b : P j) : emb i a ⊔ emb j b = ⊤
+```
+
+**`HorizontalSum.IsHorizontalSum.cross_inf_bot`**
+
+```lean
+theorem cross_inf_bot (h : IsHorizontalSum P L emb) {i j : ι} (hij : i ≠ j)
+    (a : P i) (b : P j) : emb i a ⊓ emb j b = ⊥
+```
+
+### いつ半直積が可換になるか — 捻れが自明なときだけ
+
+**`HorizontalSum.clockPow_id`**
+
+```lean
+theorem clockPow_id {f : ι → (α ≃o α)} (h : ∀ A : E ι α, clock f A = A) (k : ℕ) :
+    ∀ A : E ι α, clockPow f k A = A
+```
+
+**`HorizontalSum.semi_comm_iff`**
+
+```lean
+theorem semi_comm_iff (f : ι → (α ≃o α)) :
+    (∀ p q : Semi f, p * q = q * p) ↔ ∀ A : E ι α, clock f A = A
+```
+
+**`HorizontalSum.semi_not_comm_of_clock_ne`**
+
+```lean
+theorem semi_not_comm_of_clock_ne (f : ι → (α ≃o α)) (A : E ι α)
+    (h : clock f A ≠ A) : ¬ (∀ p q : Semi f, p * q = q * p)
 ```
 

@@ -126,8 +126,20 @@ class TheClaimsAreBounded(unittest.TestCase):
     def test_the_cone_is_not_claimed_filled(self):
         self.assertIn('埋まらない', self.design)
 
-    def test_the_readme_says_the_gap_is_mathlibs_not_maths(self):
-        self.assertIn('数学の穴ではない', self.readme)
+    def test_the_readme_separates_checked_from_unchecked_prior_art(self):
+        """**確かめたことと確かめていないことを混ぜない。**
+
+        一度「順序論では既知」と確かめずに断定した。過小主張も、確かめずに
+        言えば過大主張と同じ誤りである。その区別を消させない。
+        """
+        self.assertIn('未確認', self.readme)
+        self.assertIn('確かめていない', self.readme)
+        self.assertIn('Zappa', self.readme)
+
+    def test_the_readme_states_how_the_classical_horizontal_sum_differs(self):
+        """古典的な水平和は**有界束の境界を貼り合わせる**構成で、別物である。"""
+        self.assertIn('貼り合わせる', self.readme)
+        self.assertIn('新しく足す', self.readme)
 
     def test_the_readme_says_sufficient_not_necessary(self):
         """反例を README にも残す。ここが一度間違えたところ。"""

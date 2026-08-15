@@ -4,6 +4,11 @@ A bounded lattice whose ι-labelled chains meet only at `⊥` and join only at `
 — the **horizontal sum** — together with its action and the algebra of its
 labels. Lean 4 + Mathlib, **268 declarations audited, no `sorry`**.
 
+> ⚠️ 生成AI使用・要検証 / AI-assisted; verify.
+> 定理は Lean が確かめている（`tools/verify.py` が 268/268 を報告する）。
+> 検証が及ばないのは**その外側**——文書の主張、「Mathlib に無い」という判断、
+> 定理が意図した内容かどうか。そこは人の目で確かめてほしい。
+
 ```
 git clone https://github.com/PureTearsDropped/horizontal-sum-lattice
 cd horizontal-sum-lattice
@@ -36,8 +41,9 @@ Sum.Lex（α ⊕ₗ β）         縦積み（α の全部が β の下）で別
 WithTop.lattice           台が既に束であることを要求
 ```
 
-つまり「束でない半順序に `⊥`,`⊤` を足して束にする」構成が Mathlib に無い。
-`Family.instLattice` がそれにあたる。
+**私たちが `Order/` を当たった範囲では見つからなかった**——「束でない半順序に
+`⊥`,`⊤` を足して束にする」構成である。`Family.instLattice` がそれにあたる。
+見落としがあれば教えてほしい。
 
 **十分条件であって必要条件ではない。** 各 `P i` が束なら全体は束になるが、逆は
 成り立たない。二元の反鎖（束でない）に `⊥`,`⊤` を足すとダイヤモンド `M2` に

@@ -137,6 +137,11 @@ class TheClaimsAreBounded(unittest.TestCase):
         self.assertIn('水平和（有界半順序の族）', self.readme)
         self.assertIn('この一般形も既存の枠内', self.readme)
 
+    def test_the_readme_places_itself_in_the_hierarchy(self):
+        """**水平和も一般形ではない。**上に lattice-based sums が在る。"""
+        self.assertIn('lattice-based sum', self.readme)
+        self.assertIn('形式化しているのは階層の一点', self.readme)
+
     def test_the_readme_disclaims_mathematical_novelty(self):
         """**残るのは形式化の側だけ。**数学的な新しさは主張しない。"""
         self.assertIn('数学的な新規性としては主張しない', self.readme)

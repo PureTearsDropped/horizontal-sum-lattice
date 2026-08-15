@@ -304,3 +304,8 @@ import HorizontalSum
 #print axioms HorizontalSum.MSemi.mul_of_trivial
 #print axioms HorizontalSum.clockEnd
 #print axioms HorizontalSum.semiMulEquiv
+#print axioms HorizontalSum.IsHorizontalSum.bot_notMem_range
+#print axioms HorizontalSum.IsHorizontalSum.top_notMem_range
+#print axioms HorizontalSum.IsHorizontalSum.range_disjoint
+#print axioms HorizontalSum.IsHorizontalSum.shared_only_bounds
+#print axioms HorizontalSum.IsHorizontalSum.partition

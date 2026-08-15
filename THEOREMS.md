@@ -4,9 +4,9 @@
 在るのは宣言名と型（定理なら主張そのもの）だけで、読み・動機・解釈は
 `DESIGN.md` / `READING.md` の側に置く。生成は `tools/gen_theorems.py`。
 
-    定理・補題   376
+    定理・補題   381
     定義・実装   85
-    合計         461
+    合計         466
 
 すべて Lean 4 + Mathlib で受理済み（`sorryAx` なし）。検証は
 `python tools/verify.py` が `#print axioms` の出力から確かめる。
@@ -2647,7 +2647,7 @@ def le : T ι P → T ι P → Prop
   | .top, .top => True
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.Family.:`**
 
 ```lean
 instance : LE (T ι P)
@@ -2671,28 +2671,28 @@ theorem le_trans' {x y z : T ι P} (h₁ : le x y) (h₂ : le y z) : le x z
 theorem le_antisymm' {x y : T ι P} (h₁ : le x y) (h₂ : le y x) : x = y
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.Family.:`**
 
 ```lean
 instance : PartialOrder (T ι P) where
   le
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.Family.:`**
 
 ```lean
 instance : OrderBot (T ι P) where
   bot
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.Family.:`**
 
 ```lean
 instance : OrderTop (T ι P) where
   top
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.Family.:`**
 
 ```lean
 instance : BoundedOrder (T ι P)
@@ -2767,7 +2767,7 @@ inductive Two where
   deriving DecidableEq
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.Family.:`**
 
 ```lean
 instance : PartialOrder Two where
@@ -2873,7 +2873,7 @@ theorem inf_le_right' (x y : T ι P) : le (inf x y) y
 theorem le_inf' {x y z : T ι P} (h₁ : le x y) (h₂ : le x z) : le x (inf y z)
 ```
 
-**`HorizontalSum.instLattice`**
+**`HorizontalSum.Family.instLattice`**
 
 ```lean
 instance instLattice : Lattice (T ι P) where
@@ -3099,6 +3099,43 @@ theorem transfer_mid (h : IsHorizontalSum P S emb) (h' : IsHorizontalSum P S' em
     (i : ι) (a : P i) : transfer h h' (emb i a) = emb' i a
 ```
 
+### 「⊥ と ⊤ しか共有しない」を定理にする
+
+**`HorizontalSum.IsHorizontalSum.bot_notMem_range`**
+
+```lean
+theorem bot_notMem_range (h : IsHorizontalSum P S emb) (i : ι) :
+    (⊥ : S) ∉ Set.range (emb i)
+```
+
+**`HorizontalSum.IsHorizontalSum.top_notMem_range`**
+
+```lean
+theorem top_notMem_range (h : IsHorizontalSum P S emb) (i : ι) :
+    (⊤ : S) ∉ Set.range (emb i)
+```
+
+**`HorizontalSum.IsHorizontalSum.range_disjoint`**
+
+```lean
+theorem range_disjoint (h : IsHorizontalSum P S emb) {i j : ι} (hij : i ≠ j) :
+    Set.range (emb i) ∩ Set.range (emb j) = ∅
+```
+
+**`HorizontalSum.IsHorizontalSum.shared_only_bounds`**
+
+```lean
+theorem shared_only_bounds (h : IsHorizontalSum P S emb) (s : S)
+    (hs : ∃ i j, i ≠ j ∧ s ∈ Set.range (emb i) ∧ s ∈ Set.range (emb j)) : False
+```
+
+**`HorizontalSum.IsHorizontalSum.partition`**
+
+```lean
+theorem partition (h : IsHorizontalSum P S emb) :
+    (Set.univ : Set S) = {⊥, ⊤} ∪ ⋃ i, Set.range (emb i)
+```
+
 ### いつ水平和になるか — 必要条件を内在的に書く
 
 **`HorizontalSum.IsHorizontalSum.same_component_of_comparable`**
@@ -3225,84 +3262,84 @@ structure MSemi (φ : G →* Monoid.End N) where
   right : G
 ```
 
-**`HorizontalSum.Semi.ext'`**
+**`HorizontalSum.MSemi.ext'`**
 
 ```lean
 theorem ext' {a b : MSemi φ} (hl : a.left = b.left) (hr : a.right = b.right) :
     a = b
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.MSemi.:`**
 
 ```lean
 instance : Mul (MSemi φ) where
   mul a b
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.MSemi.:`**
 
 ```lean
 instance : One (MSemi φ) where
   one
 ```
 
-**`HorizontalSum.Semi.mul_left`**
+**`HorizontalSum.MSemi.mul_left`**
 
 ```lean
 @[simp] theorem mul_left (a b : MSemi φ) :
     (a * b).left = a.left * φ a.right b.left
 ```
 
-**`HorizontalSum.Semi.mul_right`**
+**`HorizontalSum.MSemi.mul_right`**
 
 ```lean
 @[simp] theorem mul_right (a b : MSemi φ) : (a * b).right = a.right * b.right
 ```
 
-**`HorizontalSum.Semi.one_left`**
+**`HorizontalSum.MSemi.one_left`**
 
 ```lean
 @[simp] theorem one_left : (1 : MSemi φ).left = 1
 ```
 
-**`HorizontalSum.Semi.one_right`**
+**`HorizontalSum.MSemi.one_right`**
 
 ```lean
 @[simp] theorem one_right : (1 : MSemi φ).right = 1
 ```
 
-**`HorizontalSum.Semi.:`**
+**`HorizontalSum.MSemi.:`**
 
 ```lean
 instance : Monoid (MSemi φ) where
   mul_assoc a b c
 ```
 
-**`HorizontalSum.Semi.inl`**
+**`HorizontalSum.MSemi.inl`**
 
 ```lean
 def inl (n : N) : MSemi φ
 ```
 
-**`HorizontalSum.Semi.inr`**
+**`HorizontalSum.MSemi.inr`**
 
 ```lean
 def inr (g : G) : MSemi φ
 ```
 
-**`HorizontalSum.Semi.inl_mul`**
+**`HorizontalSum.MSemi.inl_mul`**
 
 ```lean
 theorem inl_mul (m n : N) : (inl m : MSemi φ) * inl n = inl (m * n)
 ```
 
-**`HorizontalSum.Semi.inr_mul`**
+**`HorizontalSum.MSemi.inr_mul`**
 
 ```lean
 theorem inr_mul (g h : G) : (inr g : MSemi φ) * inr h = inr (g * h)
 ```
 
-**`HorizontalSum.Semi.inl_mul_inr`**
+**`HorizontalSum.MSemi.inl_mul_inr`**
 
 ```lean
 theorem inl_mul_inr (n : N) (g : G) : (inl n : MSemi φ) * inr g = ⟨n, g⟩
@@ -3314,7 +3351,7 @@ theorem inl_mul_inr (n : N) (g : G) : (inl n : MSemi φ) * inr g = ⟨n, g⟩
 theorem factor (a : MSemi φ) : a = inl a.left * inr a.right
 ```
 
-**`HorizontalSum.Semi.inr_inl_comm`**
+**`HorizontalSum.MSemi.inr_inl_comm`**
 
 ```lean
 theorem inr_inl_comm (n : N) (g : G) :

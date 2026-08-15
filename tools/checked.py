@@ -307,4 +307,9 @@ CHECKED = [
     ('MSemi.mul_of_trivial', '**φ が自明なら直積**（直積は半直積の特殊形）'),
     ('clockEnd', '時計は SupM (E ι α) の自己準同型'),
     ('semiMulEquiv', '**Semi f は標準的なモノイド半直積の実例**'),
+    ('IsHorizontalSum.bot_notMem_range', '**成分の像に ⊥ は入らない**'),
+    ('IsHorizontalSum.top_notMem_range', '**成分の像に ⊤ は入らない**'),
+    ('IsHorizontalSum.range_disjoint', '**異なる成分の像は交わらない**'),
+    ('IsHorizontalSum.shared_only_bounds', '**共有されるのは ⊥ と ⊤ だけ**'),
+    ('IsHorizontalSum.partition', '**台の分割** univ = {⊥,⊤} ∪ ⋃ 成分の像'),
 ]

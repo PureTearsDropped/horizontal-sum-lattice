@@ -147,6 +147,62 @@ theorem transfer_mid (h : IsHorizontalSum P S emb) (h' : IsHorizontalSum P S' em
 
 end IsHorizontalSum
 
+/-! ## 「⊥ と ⊤ しか共有しない」を定理にする
+
+文献の水平和は「成分は `0` と `1` **だけ**を共有する」と言う。`IsHorizontalSum`
+にはその条項を直接書いていないが、**他の条項から出る**。
+
+    ne_bot / ne_top   成分の像に `⊥` も `⊤` も入らない
+    cross             異なる成分の像は交わらない
+
+したがって台は `{⊥, ⊤}` と互いに素な像たちに**分割される**。 -/
+
+namespace IsHorizontalSum
+
+variable {ι : Type u} {P : ι → Type v} [∀ i, PartialOrder (P i)]
+variable {S : Type w} [PartialOrder S] [BoundedOrder S] {emb : ∀ i, P i → S}
+
+/-- **成分の像に `⊥` は入らない。** -/
+theorem bot_notMem_range (h : IsHorizontalSum P S emb) (i : ι) :
+    (⊥ : S) ∉ Set.range (emb i) := by
+  rintro ⟨a, ha⟩; exact h.ne_bot i a ha
+
+/-- **成分の像に `⊤` は入らない。** -/
+theorem top_notMem_range (h : IsHorizontalSum P S emb) (i : ι) :
+    (⊤ : S) ∉ Set.range (emb i) := by
+  rintro ⟨a, ha⟩; exact h.ne_top i a ha
+
+/-- **異なる成分の像は交わらない。** -/
+theorem range_disjoint (h : IsHorizontalSum P S emb) {i j : ι} (hij : i ≠ j) :
+    Set.range (emb i) ∩ Set.range (emb j) = ∅ := by
+  ext s
+  simp only [Set.mem_inter_iff, Set.mem_range, Set.mem_empty_iff_false, iff_false,
+    not_and]
+  rintro ⟨a, rfl⟩ ⟨b, hb⟩
+  exact h.ne_of_ne_index hij a b hb.symm
+
+/-- **共有されるのは `⊥` と `⊤` だけ。**二つの成分に同時に属する元は無い。 -/
+theorem shared_only_bounds (h : IsHorizontalSum P S emb) (s : S)
+    (hs : ∃ i j, i ≠ j ∧ s ∈ Set.range (emb i) ∧ s ∈ Set.range (emb j)) : False := by
+  obtain ⟨i, j, hij, hi, hj⟩ := hs
+  have : s ∈ Set.range (emb i) ∩ Set.range (emb j) := ⟨hi, hj⟩
+  rw [h.range_disjoint hij] at this
+  exact this
+
+/-- **台の分割。**`⊥`・`⊤`・成分の像で覆われ、成分どうしは互いに素で
+`⊥`,`⊤` を含まない。これが「上下端だけ同一視して並べる」の中身である。 -/
+theorem partition (h : IsHorizontalSum P S emb) :
+    (Set.univ : Set S) = {⊥, ⊤} ∪ ⋃ i, Set.range (emb i) := by
+  ext s
+  simp only [Set.mem_univ, true_iff, Set.mem_union, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Set.mem_iUnion, Set.mem_range]
+  rcases h.covers s with e | e | ⟨i, a, e⟩
+  · exact Or.inl (Or.inl e)
+  · exact Or.inl (Or.inr e)
+  · exact Or.inr ⟨i, a, e.symm⟩
+
+end IsHorizontalSum
+
 /-! ## いつ水平和になるか — 必要条件を内在的に書く
 
 「これは水平和か」を成分の族を持ち出さずに判定したい。次の二つが効く。

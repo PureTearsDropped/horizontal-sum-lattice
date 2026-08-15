@@ -84,9 +84,15 @@ def _dedent(s: str) -> str:
 
 
 def declarations(src: str) -> List[dict]:
-    """部・節と宣言を、ソースに現れる順で返す。"""
+    """部・節と宣言を、ソースに現れる順で返す。
+
+    `namespace` を追って**完全修飾名**を付ける。同じ名前が別の名前空間に
+    在りうる（`Semi.factor` と `MSemi.factor` など）ので、名前だけで
+    引いてはいけない。
+    """
     lines = src.split('\n')
     out: List[dict] = []
+    stack: List[str] = []
     i = 0
     while i < len(lines):
         ln = lines[i]
@@ -100,6 +106,15 @@ def declarations(src: str) -> List[dict]:
             out.append({'kind': 'head', 'level': len(m.group(1)), 'text': title})
             i += 1
             continue
+        st = ln.strip()
+        if st.startswith('namespace '):
+            stack.append(st.split()[1])
+            i += 1
+            continue
+        if st.startswith('end ') and stack and st.split()[1:] == [stack[-1]]:
+            stack.pop()
+            i += 1
+            continue
         m = DECL.match(ln)
         if m:
             start = i
@@ -111,27 +126,11 @@ def declarations(src: str) -> List[dict]:
                 i += 1
             block = '\n'.join(lines[start:i])
             out.append({'kind': m.group(1), 'name': m.group(2),
+                        'full': '.'.join(stack + [m.group(2)]),
                         'text': _dedent(_strip_docs(_strip_proof(block)))})
             continue
         i += 1
     return out
-
-
-def namespaces(src: str) -> dict:
-    """宣言名 → 完全修飾名。`namespace` を追って前置する。"""
-    stack: List[str] = []
-    full = {}
-    for ln in src.split('\n'):
-        s = ln.strip()
-        if s.startswith('namespace '):
-            stack.append(s.split()[1])
-        elif s.startswith('end ') and stack and s.split()[1:] == [stack[-1]]:
-            stack.pop()
-        else:
-            m = DECL.match(ln)
-            if m:
-                full.setdefault(m.group(2), '.'.join(stack + [m.group(2)]))
-    return full
 
 
 HEADER = """# `HorizontalSum.lean` の宣言一覧
@@ -159,7 +158,6 @@ def render(src: str) -> str:
     thm = sum(1 for d in decls if d['kind'] in ('theorem', 'lemma'))
     dfn = sum(1 for d in decls if d['kind'] in
               ('def', 'abbrev', 'instance', 'structure', 'inductive'))
-    full = namespaces(src)
     body = [HEADER.format(n_thm=thm, n_def=dfn, n_all=thm + dfn)]
     seen_head = False
     for d in decls:
@@ -171,8 +169,7 @@ def render(src: str) -> str:
             if not seen_head:
                 body.append('\n## 束の定義（部の区切りより前）\n')
                 seen_head = True
-            name = full.get(d['name'], d['name'])
-            body.append(f"**`{name}`**\n\n```lean\n{d['text']}\n```\n")
+            body.append(f"**`{d['full']}`**\n\n```lean\n{d['text']}\n```\n")
     return '\n'.join(body).replace('\n\n\n', '\n\n') + '\n'
 
 

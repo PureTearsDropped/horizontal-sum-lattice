@@ -2,7 +2,7 @@
 
 A bounded lattice whose ι-labelled chains meet only at `⊥` and join only at `⊤`
 — the **horizontal sum** — together with its action and the algebra of its
-labels. Lean 4 + Mathlib, **302 declarations audited, no `sorry`**.
+labels. Lean 4 + Mathlib, **307 declarations audited, no `sorry`**.
 
 > ⚠️ 生成AI使用・要検証 / AI-assisted; verify.
 > 定理は Lean が確かめている（`tools/verify.py` が 268/268 を報告する）。
@@ -13,7 +13,7 @@ labels. Lean 4 + Mathlib, **302 declarations audited, no `sorry`**.
 git clone https://github.com/PureTearsDropped/horizontal-sum-lattice
 cd horizontal-sum-lattice
 lake exe cache get && lake build
-python tools/verify.py            # 302/302
+python tools/verify.py            # 307/307
 ```
 
 ---
@@ -154,7 +154,7 @@ READING.md    この束を何と読むか。**定理は一つもこれに依存�
 
 ## 検証
 
-`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、302 本が
+`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、307 本が
 
 - 受理されていること（Lean は受理した宣言にしか答えない）
 - `sorryAx` を含まないこと
@@ -206,6 +206,16 @@ IsHorizontalSum         成分の元は ⊥ でも ⊤ でもない・成分の�
                         非退化（文献も "nontrivial" と言う）
 mid_isHorizontalSum     **Family.T はこの意味での水平和である**
 transfer_bot/top/mid    二つの水平和の間の対応（⊥↦⊥・⊤↦⊤・emb↦emb'）
+```
+
+文献は「成分は `0` と `1` **だけ**を共有する」と言う。その条項は定義に直接
+書いていないが、**他の条項から出る**。
+
+```
+bot_notMem_range / top_notMem_range  成分の像に ⊥ も ⊤ も入らない
+range_disjoint                       **異なる成分の像は交わらない**
+shared_only_bounds                   **共有されるのは ⊥ と ⊤ だけ**
+partition                            univ = {⊥,⊤} ∪ ⋃ 成分の像
 ```
 
 ### いつ水平和になるか・いつ可換になるか

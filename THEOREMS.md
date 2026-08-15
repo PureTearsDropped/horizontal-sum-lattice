@@ -4,9 +4,9 @@
 在るのは宣言名と型（定理なら主張そのもの）だけで、読み・動機・解釈は
 `DESIGN.md` / `READING.md` の側に置く。生成は `tools/gen_theorems.py`。
 
-    定理・補題   361
-    定義・実装   73
-    合計         434
+    定理・補題   376
+    定義・実装   85
+    合計         461
 
 すべて Lean 4 + Mathlib で受理済み（`sorryAx` なし）。検証は
 `python tools/verify.py` が `#print axioms` の出力から確かめる。
@@ -3158,5 +3158,190 @@ theorem semi_comm_iff (f : ι → (α ≃o α)) :
 ```lean
 theorem semi_not_comm_of_clock_ne (f : ι → (α ≃o α)) (A : E ι α)
     (h : clock f A ≠ A) : ¬ (∀ p q : Semi f, p * q = q * p)
+```
+
+## MonoidSemidirect
+
+## モノイドの半直積 — 一般形を書いて `Semi` をその実例にする
+
+**`HorizontalSum.SupM`**
+
+```lean
+def SupM (α : Type v) : Type v
+```
+
+**`HorizontalSum.SupM.of`**
+
+```lean
+def of (a : α) : SupM α
+```
+
+**`HorizontalSum.SupM.out`**
+
+```lean
+def out (a : SupM α) : α
+```
+
+**`HorizontalSum.SupM.out_of`**
+
+```lean
+@[simp] theorem out_of (a : α) : out (of a) = a
+```
+
+**`HorizontalSum.SupM.of_out`**
+
+```lean
+@[simp] theorem of_out (a : SupM α) : of (out a) = a
+```
+
+**`HorizontalSum.SupM.[SemilatticeSup`**
+
+```lean
+instance [SemilatticeSup α] [OrderBot α] : CommMonoid (SupM α) where
+  mul a b
+```
+
+**`HorizontalSum.SupM.mul_def`**
+
+```lean
+@[simp] theorem mul_def [SemilatticeSup α] [OrderBot α] (a b : SupM α) :
+    a * b = of (out a ⊔ out b)
+```
+
+**`HorizontalSum.SupM.one_def`**
+
+```lean
+@[simp] theorem one_def [SemilatticeSup α] [OrderBot α] :
+    (1 : SupM α) = of ⊥
+```
+
+### 一般形
+
+**`HorizontalSum.MSemi`**
+
+```lean
+structure MSemi (φ : G →* Monoid.End N) where
+  left : N
+  right : G
+```
+
+**`HorizontalSum.Semi.ext'`**
+
+```lean
+theorem ext' {a b : MSemi φ} (hl : a.left = b.left) (hr : a.right = b.right) :
+    a = b
+```
+
+**`HorizontalSum.Semi.:`**
+
+```lean
+instance : Mul (MSemi φ) where
+  mul a b
+```
+
+**`HorizontalSum.Semi.:`**
+
+```lean
+instance : One (MSemi φ) where
+  one
+```
+
+**`HorizontalSum.Semi.mul_left`**
+
+```lean
+@[simp] theorem mul_left (a b : MSemi φ) :
+    (a * b).left = a.left * φ a.right b.left
+```
+
+**`HorizontalSum.Semi.mul_right`**
+
+```lean
+@[simp] theorem mul_right (a b : MSemi φ) : (a * b).right = a.right * b.right
+```
+
+**`HorizontalSum.Semi.one_left`**
+
+```lean
+@[simp] theorem one_left : (1 : MSemi φ).left = 1
+```
+
+**`HorizontalSum.Semi.one_right`**
+
+```lean
+@[simp] theorem one_right : (1 : MSemi φ).right = 1
+```
+
+**`HorizontalSum.Semi.:`**
+
+```lean
+instance : Monoid (MSemi φ) where
+  mul_assoc a b c
+```
+
+**`HorizontalSum.Semi.inl`**
+
+```lean
+def inl (n : N) : MSemi φ
+```
+
+**`HorizontalSum.Semi.inr`**
+
+```lean
+def inr (g : G) : MSemi φ
+```
+
+**`HorizontalSum.Semi.inl_mul`**
+
+```lean
+theorem inl_mul (m n : N) : (inl m : MSemi φ) * inl n = inl (m * n)
+```
+
+**`HorizontalSum.Semi.inr_mul`**
+
+```lean
+theorem inr_mul (g h : G) : (inr g : MSemi φ) * inr h = inr (g * h)
+```
+
+**`HorizontalSum.Semi.inl_mul_inr`**
+
+```lean
+theorem inl_mul_inr (n : N) (g : G) : (inl n : MSemi φ) * inr g = ⟨n, g⟩
+```
+
+**`HorizontalSum.MSemi.factor`**
+
+```lean
+theorem factor (a : MSemi φ) : a = inl a.left * inr a.right
+```
+
+**`HorizontalSum.Semi.inr_inl_comm`**
+
+```lean
+theorem inr_inl_comm (n : N) (g : G) :
+    (inr g : MSemi φ) * inl n = inl (φ g n) * inr g
+```
+
+**`HorizontalSum.MSemi.mul_of_trivial`**
+
+```lean
+theorem mul_of_trivial (h : ∀ g, φ g = 1) (a b : MSemi φ) :
+    a * b = ⟨a.left * b.left, a.right * b.right⟩
+```
+
+### `Semi f` はこの形である
+
+**`HorizontalSum.clockEnd`**
+
+```lean
+def clockEnd (f : ι → (α ≃o α)) :
+    Multiplicative ℕ →* Monoid.End (SupM (E ι α)) where
+  toFun k
+```
+
+**`HorizontalSum.semiMulEquiv`**
+
+```lean
+def semiMulEquiv (f : ι → (α ≃o α)) : Semi f ≃* MSemi (clockEnd f) where
+  toFun p
 ```
 

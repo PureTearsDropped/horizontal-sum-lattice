@@ -65,8 +65,8 @@ class TheAuditCoversEverything(unittest.TestCase):
         self.assertEqual(printed - {n for n, _ in CHECKED}, set())
 
     def test_the_count_is_stated_everywhere(self):
-        self.assertEqual(len(CHECKED), 285)
-        self.assertIn('285', (ROOT / 'README.md').read_text())
+        self.assertEqual(len(CHECKED), 302)
+        self.assertIn('302', (ROOT / 'README.md').read_text())
 
 
 class TheGeneratedDocumentIsFresh(unittest.TestCase):

@@ -16,3 +16,4 @@ import HorizontalSum.Bridge
 import HorizontalSum.Family
 import HorizontalSum.Cost
 import HorizontalSum.Bounded
+import HorizontalSum.MonoidSemidirect

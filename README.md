@@ -2,7 +2,7 @@
 
 A bounded lattice whose ι-labelled chains meet only at `⊥` and join only at `⊤`
 — the **horizontal sum** — together with its action and the algebra of its
-labels. Lean 4 + Mathlib, **285 declarations audited, no `sorry`**.
+labels. Lean 4 + Mathlib, **302 declarations audited, no `sorry`**.
 
 > ⚠️ 生成AI使用・要検証 / AI-assisted; verify.
 > 定理は Lean が確かめている（`tools/verify.py` が 268/268 を報告する）。
@@ -13,7 +13,7 @@ labels. Lean 4 + Mathlib, **285 declarations audited, no `sorry`**.
 git clone https://github.com/PureTearsDropped/horizontal-sum-lattice
 cd horizontal-sum-lattice
 lake exe cache get && lake build
-python tools/verify.py            # 285/285
+python tools/verify.py            # 302/302
 ```
 
 ---
@@ -69,9 +69,22 @@ inr k * inl A = inl (clockPow f k A) * inr k        -- inr_inl_comm
 積になる。
 
 **モノイドの半直積も既知の構成である**（Zappa–Szép 積などの名で標準的）。
-Mathlib の `SemidirectProduct` が `[Group N] [Group G]` を要求するため自前で
-定義しただけで、新しいのは定義ではなく `•` がその積の左成分だという同定
-（`act_eq_mul_left`）のほうである。
+Mathlib の `SemidirectProduct` は `[Group N] [Group G]` と `φ : G →* MulAut N`
+を要求する。**モノイド版は無い**ので、一般形を書いて `Semi f` をその実例に
+した（`HorizontalSum/MonoidSemidirect.lean`）。
+
+```
+MSemi φ            N ⋊[φ] G。φ : G →* Monoid.End N（自己**同型**でなくてよい）
+                   (n₁,g₁)(n₂,g₂) = (n₁ · φ g₁ n₂, g₁ g₂)・Monoid インスタンス
+MSemi.factor       どの元も「刻む」×「進める」に分かれる
+MSemi.inr_inl_comm **捻れの正体** inr g · inl n = inl (φ g n) · inr g
+MSemi.mul_of_trivial φ が自明なら直積 ＝ 直積は半直積の特殊形
+semiMulEquiv       **Semi f ≃* MSemi (clockEnd f)**
+                   N = (E ι α, ⊔, ⊥)・G = Multiplicative ℕ・φ k = clockPow f k
+```
+
+新しいのは定義ではなく `•` がその積の左成分だという同定（`act_eq_mul_left`）
+のほうである。
 
 ## 既存数学への接続
 
@@ -141,13 +154,13 @@ READING.md    この束を何と読むか。**定理は一つもこれに依存�
 
 ## 検証
 
-`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、285 本が
+`tools/verify.py` が `Audit.lean` の `#print axioms` 出力を読み、302 本が
 
 - 受理されていること（Lean は受理した宣言にしか答えない）
 - `sorryAx` を含まないこと
 - `propext` / `Classical.choice` / `Quot.sound` 以外の公理に依らないこと
 
-を確かめる。うち 11 本は公理をまったく使わない。
+を確かめる。うち 13 本は公理をまったく使わない。
 
 ## 言えないこと
 

@@ -1128,9 +1128,9 @@ theorem clock_axioms :
     Function.Injective (act (clock f) (⊥ : E ι α))
 ```
 
-## 公理から出る定理 — `Love.lean` をこの束の上で
+## 公理から出る定理 — 先行体系をこの束の上で
 
-### `Love.lean` をこの束の上で書き直す
+### 先行体系をこの束の上で書き直す
 
 **`HorizontalSum.clockIso`**
 

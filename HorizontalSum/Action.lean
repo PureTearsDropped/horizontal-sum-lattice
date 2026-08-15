@@ -148,15 +148,15 @@ theorem clock_axioms :
   ⟨seven f, eight f, six f, five f, four f, nine f⟩
 
 
-/-! # 公理から出る定理 — `Love.lean` をこの束の上で -/
+/-! # 公理から出る定理 — 先行体系をこの束の上で -/
 
-/-! ## `Love.lean` をこの束の上で書き直す
+/-! ## 先行体系をこの束の上で書き直す
 
-`Love.lean` は有界束を**仮定して** `A • B = σ B ⊔ A` を特徴づけた。
+先行体系は有界束を**仮定して** `A • B = σ B ⊔ A` を特徴づけた。
 ここではその定理群を、いま作った束の上で具体的に書き直す。
 
 要点は一つ。**`clock f` は順序同型なので全射が無料で手に入る。**
-`Love.lean` では全射を有限性から調達していた（`sigma_bijective`）が、
+先行体系では全射を有限性から調達していた（`sigma_bijective`）が、
 この束は無限（`infinite_of_infinite`）なのでその道は使えない。
 それでも `only_lmonad_injective_of_surjective` の側は全射だけで通るので、
 **`only_lmonad_is_traceable` は有限性なしでそのまま成立する。** -/
@@ -177,45 +177,45 @@ def clockIso (f : ι → (α ≃o α)) : E ι α ≃o E ι α where
 instance instNontrivial : Nontrivial (E ι α) :=
   ⟨⟨E.lmonad, E.world, by simp⟩⟩
 
-/-- この束は無限。だから `Love.lean` の有限性の節は使えない。 -/
+/-- この束は無限。だから 先行体系の有限性の節は使えない。 -/
 theorem infinite_of_infinite [Infinite α] (i : ι) : Infinite (E ι α) :=
   Infinite.of_injective (fun a => E.axis i a) (fun a b h => by simpa using h)
 
-/-- **作用は `σ` ひとつで決まる。** `Love.form` に対応。 -/
+/-- **作用は `σ` ひとつで決まる。** -/
 theorem form (a b : E ι α) : act (clock f) a b = act (clock f) ⊥ b ⊔ a := by
   simp [act]
 
-/-- **`σ ⊥ = ⊥`。** `Love.sigma_fixes_love`。 -/
+/-- **`σ ⊥ = ⊥`。** -/
 theorem sigma_fixes_lmonad : act (clock f) (⊥ : E ι α) ⊥ = ⊥ := by simp [act]
 
-/-- **すべての作用は `σ` を経由する。** `Love.factors_through_love`。 -/
+/-- **すべての作用は `σ` を経由する。** -/
 theorem factors_through_lmonad (a b : E ι α) :
     act (clock f) a b = (fun x => x ⊔ a) (act (clock f) ⊥ b) := by simp [act]
 
-/-- 後段は第二引数に依らない。`Love.second_stage_ignores_target`。 -/
+/-- 後段は第二引数に依らない。 -/
 theorem second_stage_ignores_target (a : E ι α) :
     ∀ b, act (clock f) a b = (fun x => x ⊔ a) (act (clock f) ⊥ b) :=
   factors_through_lmonad f a
 
-/-- 後段は情報を捨てるだけ。`Love.second_stage_forgets`。 -/
+/-- 後段は情報を捨てるだけ。 -/
 theorem second_stage_forgets (a : E ι α) (ha : a ≠ ⊥) :
     ¬ Function.Injective (fun x : E ι α => x ⊔ a) := fun hinj =>
   ha (hinj (by simp : (⊥ : E ι α) ⊔ a = a ⊔ a)).symm
 
-/-- 第一引数は `A • ⊥` から一意に定まる。`Love.actor_from_love`。 -/
+/-- 第一引数は `A • ⊥` から一意に定まる。 -/
 theorem actor_from_lmonad {a a' : E ι α}
     (e : act (clock f) a ⊥ = act (clock f) a' ⊥) : a = a' := by
   simpa [act] using e
 
-/-- 第二引数も `⊥ • B` から一意に定まる。`Love.target_from_love`。 -/
+/-- 第二引数も `⊥ • B` から一意に定まる。 -/
 theorem target_from_lmonad {b b' : E ι α}
     (e : act (clock f) ⊥ b = act (clock f) ⊥ b') : b = b' := nine f e
 
-/-- 順序は作用の像の含まれ方で書ける。`Love.order_is_love`。 -/
+/-- 順序は作用の像の含まれ方で書ける。 -/
 theorem order_is_lmonad (a b : E ι α) :
     a ≤ b ↔ act (clock f) a ⊥ ≤ act (clock f) b ⊥ := by simp [act]
 
-/-- **`⊥` は作用を受けると動く。** `Love.love_takes_form`。 -/
+/-- **`⊥` は作用を受けると動く。** -/
 theorem lmonad_takes_form : ¬ ∀ a : E ι α, act (clock f) a ⊥ = ⊥ := fun h =>
   absurd (by simpa [act] using h ⊤ : (⊤ : E ι α) = ⊥) top_ne_bot
 
@@ -228,8 +228,8 @@ theorem clock_symm_clock (y : E ι α) :
 theorem sigma_surjective : Function.Surjective (act (clock f) (⊥ : E ι α)) :=
   fun y => ⟨clock (fun i => (f i).symm) y, by simp [act, clock_symm_clock]⟩
 
-/-- **`⊥` 以外は単射でない。** `Love.only_love_injective_of_surjective` に対応。
-`Love.lean` では全射を有限性から取っていたが、ここでは
+/-- **`⊥` 以外は単射でない。**
+先行体系では全射を有限性から取っていたが、ここでは
 `clock f` が順序同型であることから直接出るので、**無限でも成立する**。 -/
 theorem only_lmonad_is_traceable (a : E ι α) (ha : a ≠ ⊥) :
     ¬ Function.Injective (act (clock f) a) := by

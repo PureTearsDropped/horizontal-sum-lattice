@@ -97,7 +97,7 @@ CHECKED = [
     ('nine', '⑨ 愛の働きは相手ごとに違う'),
     ('clock_axioms', '**公理は一つも壊れない**'),
     ('clockIso', '軸ごとの時計は順序同型'),
-    ('infinite_of_infinite', 'この束は無限 ⟹ Love の有限性の節は使えない'),
+    ('infinite_of_infinite', 'この束は無限 ⟹ 先行体系の有限性の節は使えない'),
     ('form', '作用は愛の働きひとつで決まる'),
     ('sigma_fixes_lmonad', '愛が愛に働いても愛のまま'),
     ('factors_through_lmonad', '**すべての作用は愛の働きを経由する**'),
